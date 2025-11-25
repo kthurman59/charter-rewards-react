@@ -1,41 +1,70 @@
-Problem statement
-Build a React client that shows reward points per customer per month and total for the last three months of transactions.  Points are given as one point for each dollar between fifty and one hundred and two points for each dollar above one hundred.
+# Getting Started with Create React App
 
-Reward rules
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Available Scripts
 
-Simulated endpoints
-  - RewardsDashboard fetch data, hold state, wire everything
+In the project directory, you can run:
 
-  - RewardsTable render monthly and total rewards for one customer
+### `npm start`
 
-  - CustomerSelector dropdown or list for picking customer
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-  - rewardsCalculator pure functions to calculate points and monthly totals
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-Data model
+### `npm test`
 
-Folder structure
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-Test strategy
-  Pure function tests
+### `npm run build`
 
-    calculatePoints(amount) with boundary amounts 49, 50, 51, 100, 101, 120
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-    Aggregation function that converts transactions into monthly totals
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-  Component tests
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-    RewardsTable renders correct totals for given props
+### `npm run eject`
 
-    RewardsDashboard shows loading state then table once fake API resolves
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-    Customer change updates displayed data
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-Naming and conventions note
-  Rule: variable names describe contents, no single letters except trivial map args in very small scopes
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-  Example names: transactions, monthlyRewards, selectedCustomerId, pointsForTransaction
+## Learn More
 
-  No generic names like data, info, obj unless truly generic
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
+
+### Code Splitting
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+
+### Analyzing the Bundle Size
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+
+### Making a Progressive Web App
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+
+### Advanced Configuration
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+### Deployment
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
