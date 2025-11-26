@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+# Customer Rewards React Assessment
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Customer rewards calculator built with React.  
+It simulates async API calls, applies the Charter reward rules to three months of transactions, and shows monthly and total reward points per customer.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Requirements checklist
 
-### `npm start`
+* Use React JS for the UI and do not use TypeScript  
+  Implementation  The app is created with Create React App and uses plain JavaScript files under `src`. There are no TypeScript files or TypeScript dependencies.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+* Simulate asynchronous API calls to fetch data  
+  Implementation  `src/data/api.js` exports functions that return Promises and resolve mock transaction data after a short timeout to simulate network latency.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+* Make up a data set that clearly demonstrates the solution  
+  Implementation  `src/data/mockTransactions.js` defines multiple customers with transactions across several months, including amounts around the reward rule boundaries.
 
-### `npm test`
+* Given all transactions in a three month period compute reward points for each customer per month and total  
+  Implementation  
+  * `src/utils/calculatePoints.js` implements the per transaction reward rule.  
+  * `src/utils/summarizeMonthlyRewards.js` groups transactions by customer and month, applies the three month window, and returns monthly point totals.  
+  * `src/components/RewardsDashboard.jsx` and its child components render a monthly breakdown table and a per customer totals table.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* Include unit tests that are clear and easy to understand  
+  Implementation  Jest and React Testing Library tests live in `src/utils/*.test.js`, `src/data/api.test.js`, `src/App.test.js`, and `src/components/RewardsDashboard.test.jsx`. They cover the reward rule, three month aggregation, mock API behavior, and the main UI states.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Running the app
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Prerequisites  Node and npm installed.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Install dependencies
 
-### `npm run eject`
+```bash
+npm install
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

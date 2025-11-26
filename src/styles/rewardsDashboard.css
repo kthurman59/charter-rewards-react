@@ -1,0 +1,25 @@
+.rewards-dashboard {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding: 1.5rem;
+}
+
+.rewards-dashboard__controls {
+  margin-bottom: 1rem;
+}
+
+.rewards-dashboard__totals {
+  margin-top: 1.5rem;
+}
+
+.rewards-dashboard table {
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.rewards-dashboard th,
+.rewards-dashboard td {
+  border: 1px solid #ddd;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
