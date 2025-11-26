@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from "react";
 import { useRewardsData } from "../hooks/useRewardsData";
 import { summarizeMonthlyRewards } from "../utils/summarizeMonthlyRewards";
+import "../styles/rewardsDashboard.css";
+import CustomerSelector from "./CustomerSelector";
+import MonthlyRewardsTable from "./MonthlyRewardsTable";
+import CustomerTotalsTable from "./CustomerTotalsTable";
 
 function RewardsDashboard() {
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const { transactions, loading, error } = useRewardsData(selectedCustomerId);
 
-  // derive unique customers from the loaded transactions
   const customers = useMemo(() => {
     const map = new Map();
     transactions.forEach((tx) => {
@@ -20,7 +23,6 @@ function RewardsDashboard() {
     }));
   }, [transactions]);
 
-  // choose a reference date based on the latest transaction in the data
   const referenceDate = useMemo(() => {
     if (!transactions.length) {
       return null;
@@ -33,7 +35,6 @@ function RewardsDashboard() {
     return new Date(latestIsoDate);
   }, [transactions]);
 
-  // summarize monthly rewards using that reference date
   const monthlySummaries = useMemo(() => {
     if (!transactions.length) {
       return [];
@@ -43,7 +44,6 @@ function RewardsDashboard() {
     return summarizeMonthlyRewards(transactions, ref);
   }, [transactions, referenceDate]);
 
-  // compute total points per customer across the summarized months
   const customerTotals = useMemo(() => {
     const totalsByCustomer = new Map();
 
@@ -74,79 +74,36 @@ function RewardsDashboard() {
   }
 
   return (
-    <main>
+    <main className="rewards-dashboard">
       <h1>Customer Rewards</h1>
 
-      <section style={{ marginBottom: "1rem" }}>
-        <label htmlFor="customer-select">Customer</label>{" "}
-        <select
-          id="customer-select"
-          value={selectedCustomerId ?? ""}
-          onChange={handleCustomerChange}
-        >
-          <option value="">All customers</option>
-          {customers.map((customer) => (
-            <option key={customer.id} value={customer.id}>
-              {customer.name}
-            </option>
-          ))}
-        </select>
-      </section>
+      <CustomerSelector
+        customers={customers}
+        selectedCustomerId={selectedCustomerId}
+        onChange={handleCustomerChange}
+      />
 
       {loading && <p>Loading transactions</p>}
 
       {error && (
-        <p role="alert">
-          Something went wrong while loading transactions
-        </p>
+        <p role="alert">Something went wrong while loading transactions</p>
       )}
 
       {!loading && !error && !transactions.length && (
         <p>No transactions found</p>
       )}
 
-      {!loading && !error && monthlySummaries.length > 0 && (
-        <table>
-          <thead>
-            <tr>
-              <th>Customer</th>
-              <th>Month</th>
-              <th>Points</th>
-            </tr>
-          </thead>
-          <tbody>
-            {monthlySummaries.map((summary) => (
-              <tr key={`${summary.customerId}-${summary.month}`}>
-                <td>{summary.customerName}</td>
-                <td>{summary.month}</td>
-                <td>{summary.points}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <MonthlyRewardsTable
+        monthlySummaries={monthlySummaries}
+        loading={loading}
+        error={error}
+      />
 
-      {!loading && !error && customerTotals.length > 0 && (
-        <section style={{ marginTop: "1.5rem" }}>
-          <h2>Customer total points</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Customer</th>
-                <th>Total points</th>
-              </tr>
-            </thead>
-            <tbody>
-              {customerTotals.map((total) => (
-                <tr key={total.customerId}>
-                  <td>{total.customerName}</td>
-                  <td>{total.totalPoints}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-      )}
+      <CustomerTotalsTable
+        customerTotals={customerTotals}
+        loading={loading}
+        error={error}
+      />
     </main>
   );
 }
