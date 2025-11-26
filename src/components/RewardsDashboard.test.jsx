@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import RewardsDashboard from "./RewardsDashboard";
 import { useRewardsData } from "../hooks/useRewardsData";
 
@@ -65,16 +65,20 @@ describe("RewardsDashboard", () => {
     expect(augustRow).toHaveTextContent("110");
 
     // totals table heading
-    expect(
-      screen.getByRole("heading", { name: /customer total points/i })
-    ).toBeInTheDocument();
+    const totalsHeading = screen.getByRole("heading", {
+      name: /customer total points/i,
+    });
+    expect(totalsHeading).toBeInTheDocument();
+
+    const totalsSection = totalsHeading.closest("section");
+    const totalsTable = within(totalsSection).getByRole("table");
 
     // totals rows
-    const aliceTotalRow = screen.getByText("100").closest("tr");
-    expect(aliceTotalRow).toHaveTextContent("Alice");
+    const aliceTotalRow = within(totalsTable).getByText("Alice").closest("tr");
+    expect(aliceTotalRow).toHaveTextContent("100");
 
-    const bobTotalRow = screen.getByText("110").closest("tr");
-    expect(bobTotalRow).toHaveTextContent("Bob");
+    const bobTotalRow = within(totalsTable).getByText("Bob").closest("tr");
+    expect(bobTotalRow).toHaveTextContent("110");
   });
 
   test("shows loading state when hook reports loading", () => {
