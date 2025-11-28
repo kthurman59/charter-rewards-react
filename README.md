@@ -64,3 +64,18 @@ Install dependencies
 
 ```bash
 npm install
+```
+
+Start the development server
+```bash
+npm start
+```
+Then open the URL shown in the terminal in a browser.
+
+## Running tests
+
+Run the full test suite
+```bash
+npm test
+```
+Jest will watch for changes and rerun relevant tests.
