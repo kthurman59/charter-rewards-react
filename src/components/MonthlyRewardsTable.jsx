@@ -6,24 +6,27 @@ function MonthlyRewardsTable({ monthlySummaries, loading, error }) {
   }
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Customer</th>
-          <th>Month</th>
-          <th>Points</th>
-        </tr>
-      </thead>
-      <tbody>
-        {monthlySummaries.map((summary) => (
-          <tr key={`${summary.customerId}-${summary.month}`}>
-            <td>{summary.customerName}</td>
-            <td>{summary.month}</td>
-            <td>{summary.points}</td>
+    <section className="rewards-dashboard__monthly">
+      <h2>Monthly reward points</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Month</th>
+            <th>Points</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {monthlySummaries.map((summary) => (
+            <tr key={`${summary.customerId}-${summary.month}`}>
+              <td>{summary.customerName}</td>
+              <td>{summary.month}</td>
+              <td>{summary.points}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
   );
 }
 

@@ -10,7 +10,7 @@ function RewardsDashboard() {
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const { transactions, loading, error } = useRewardsData();
 
-  // All customers, regardless of current selection
+  // All customers from the full data set
   const customers = useMemo(() => {
     const map = new Map();
     transactions.forEach((tx) => {
@@ -24,17 +24,15 @@ function RewardsDashboard() {
     }));
   }, [transactions]);
 
-  // Filtered transactions for the current view
+  // Current view, optionally filtered by customer
   const filteredTransactions = useMemo(() => {
     if (selectedCustomerId == null) {
       return transactions;
     }
-    return transactions.filter(
-      (tx) => tx.customerId === selectedCustomerId
-    );
+    return transactions.filter((tx) => tx.customerId === selectedCustomerId);
   }, [transactions, selectedCustomerId]);
 
-  // Reference date based on the currently visible transactions
+  // Anchor three month window on latest visible transaction
   const referenceDate = useMemo(() => {
     if (!filteredTransactions.length) {
       return null;
@@ -53,7 +51,18 @@ function RewardsDashboard() {
     }
 
     const ref = referenceDate || new Date();
-    return summarizeMonthlyRewards(filteredTransactions, ref);
+    const summaries = summarizeMonthlyRewards(filteredTransactions, ref);
+
+    // Sort by customer name, then by month
+    summaries.sort((a, b) => {
+      const nameCompare = a.customerName.localeCompare(b.customerName);
+      if (nameCompare !== 0) {
+        return nameCompare;
+      }
+      return a.month.localeCompare(b.month);
+    });
+
+    return summaries;
   }, [filteredTransactions, referenceDate]);
 
   const customerTotals = useMemo(() => {
@@ -73,7 +82,14 @@ function RewardsDashboard() {
       }
     });
 
-    return Array.from(totalsByCustomer.values());
+    const totalsArray = Array.from(totalsByCustomer.values());
+
+    // Sort totals by customer name
+    totalsArray.sort((a, b) =>
+      a.customerName.localeCompare(b.customerName)
+    );
+
+    return totalsArray;
   }, [monthlySummaries]);
 
   function handleCustomerChange(event) {
