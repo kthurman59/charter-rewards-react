@@ -8,8 +8,9 @@ import CustomerTotalsTable from "./CustomerTotalsTable";
 
 function RewardsDashboard() {
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
-  const { transactions, loading, error } = useRewardsData(selectedCustomerId);
+  const { transactions, loading, error } = useRewardsData();
 
+  // All customers, regardless of current selection
   const customers = useMemo(() => {
     const map = new Map();
     transactions.forEach((tx) => {
@@ -23,26 +24,37 @@ function RewardsDashboard() {
     }));
   }, [transactions]);
 
+  // Filtered transactions for the current view
+  const filteredTransactions = useMemo(() => {
+    if (selectedCustomerId == null) {
+      return transactions;
+    }
+    return transactions.filter(
+      (tx) => tx.customerId === selectedCustomerId
+    );
+  }, [transactions, selectedCustomerId]);
+
+  // Reference date based on the currently visible transactions
   const referenceDate = useMemo(() => {
-    if (!transactions.length) {
+    if (!filteredTransactions.length) {
       return null;
     }
 
-    const latestIsoDate = transactions.reduce((latest, tx) => {
+    const latestIsoDate = filteredTransactions.reduce((latest, tx) => {
       return tx.date > latest ? tx.date : latest;
-    }, transactions[0].date);
+    }, filteredTransactions[0].date);
 
     return new Date(latestIsoDate);
-  }, [transactions]);
+  }, [filteredTransactions]);
 
   const monthlySummaries = useMemo(() => {
-    if (!transactions.length) {
+    if (!filteredTransactions.length) {
       return [];
     }
 
     const ref = referenceDate || new Date();
-    return summarizeMonthlyRewards(transactions, ref);
-  }, [transactions, referenceDate]);
+    return summarizeMonthlyRewards(filteredTransactions, ref);
+  }, [filteredTransactions, referenceDate]);
 
   const customerTotals = useMemo(() => {
     const totalsByCustomer = new Map();
@@ -73,6 +85,13 @@ function RewardsDashboard() {
     }
   }
 
+  const hasNoTransactionsForView =
+    !loading && !error && !filteredTransactions.length;
+
+  const emptyMessage = selectedCustomerId
+    ? "No transactions found for this customer"
+    : "No transactions found";
+
   return (
     <main className="rewards-dashboard">
       <h1>Customer Rewards</h1>
@@ -89,9 +108,7 @@ function RewardsDashboard() {
         <p role="alert">Something went wrong while loading transactions</p>
       )}
 
-      {!loading && !error && !transactions.length && (
-        <p>No transactions found</p>
-      )}
+      {hasNoTransactionsForView && <p>{emptyMessage}</p>}
 
       <MonthlyRewardsTable
         monthlySummaries={monthlySummaries}

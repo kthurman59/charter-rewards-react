@@ -1,15 +1,17 @@
-import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { useRewardsData } from "./useRewardsData";
-import {
-  fetchAllTransactions,
-  fetchTransactionsByCustomer,
-} from "../data/api";
 
-jest.mock("../data/api");
+// Mock the API module
+jest.mock("../data/api", () => ({
+  fetchAllTransactions: jest.fn(),
+}));
 
-function TestComponent({ selectedCustomerId }) {
-  const { transactions, loading, error } = useRewardsData(selectedCustomerId);
+// Pull the mock out so we can control it in tests
+const { fetchAllTransactions } = require("../data/api");
+
+function TestComponent() {
+  const { transactions, loading, error } = useRewardsData();
 
   return (
     <div>
@@ -22,56 +24,44 @@ function TestComponent({ selectedCustomerId }) {
 
 describe("useRewardsData", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    fetchAllTransactions.mockReset();
   });
 
-  test("loads all transactions when no customer id is selected", async () => {
+  test("loads all transactions on mount", async () => {
     fetchAllTransactions.mockResolvedValue([
-      { id: "t1", customerId: 1, customerName: "Alice", date: "2025-06-10", amount: 120 },
-      { id: "t2", customerId: 2, customerName: "Bob", date: "2025-07-10", amount: 60 },
+      { id: "t1" },
+      { id: "t2" },
+      { id: "t3" },
     ]);
 
-    render(<TestComponent selectedCustomerId={null} />);
+    render(<TestComponent />);
 
+    // initial state
     expect(screen.getByTestId("loading").textContent).toBe("true");
+    expect(screen.getByTestId("error").textContent).toBe("false");
+    expect(screen.getByTestId("count").textContent).toBe("0");
 
+    // after load finishes
     await waitFor(() => {
       expect(screen.getByTestId("loading").textContent).toBe("false");
     });
 
-    expect(screen.getByTestId("count").textContent).toBe("2");
+    expect(screen.getByTestId("error").textContent).toBe("false");
+    expect(screen.getByTestId("count").textContent).toBe("3");
     expect(fetchAllTransactions).toHaveBeenCalledTimes(1);
-    expect(fetchTransactionsByCustomer).not.toHaveBeenCalled();
-    expect(screen.getByTestId("error").textContent).toBe("false");
   });
 
-  test("loads transactions for a specific customer", async () => {
-    fetchTransactionsByCustomer.mockResolvedValue([
-      { id: "t3", customerId: 1, customerName: "Alice", date: "2025-08-01", amount: 130 },
-    ]);
+  test("sets error when loading fails and leaves transactions empty", async () => {
+    fetchAllTransactions.mockRejectedValue(new Error("Network error"));
 
-    render(<TestComponent selectedCustomerId={1} />);
-
-    await waitFor(() => {
-      expect(screen.getByTestId("loading").textContent).toBe("false");
-    });
-
-    expect(fetchTransactionsByCustomer).toHaveBeenCalledTimes(1);
-    expect(fetchTransactionsByCustomer).toHaveBeenCalledWith(1);
-    expect(screen.getByTestId("count").textContent).toBe("1");
-    expect(screen.getByTestId("error").textContent).toBe("false");
-  });
-
-  test("sets error when the api call fails", async () => {
-    fetchAllTransactions.mockRejectedValue(new Error("Network"));
-
-    render(<TestComponent selectedCustomerId={null} />);
+    render(<TestComponent />);
 
     await waitFor(() => {
       expect(screen.getByTestId("loading").textContent).toBe("false");
     });
 
     expect(screen.getByTestId("error").textContent).toBe("true");
+    expect(screen.getByTestId("count").textContent).toBe("0");
     expect(fetchAllTransactions).toHaveBeenCalledTimes(1);
   });
 });

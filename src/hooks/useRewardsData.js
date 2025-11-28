@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-  fetchAllTransactions,
-  fetchTransactionsByCustomer,
-} from "../data/api";
+import { fetchAllTransactions } from "../data/api";
 
-export function useRewardsData(selectedCustomerId) {
+export function useRewardsData() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -17,17 +14,16 @@ export function useRewardsData(selectedCustomerId) {
       setError(null);
 
       try {
-        const data = selectedCustomerId
-          ? await fetchTransactionsByCustomer(selectedCustomerId)
-          : await fetchAllTransactions();
-
+        const data = await fetchAllTransactions();
         if (!isCancelled) {
           setTransactions(data);
-          setLoading(false);
         }
       } catch (err) {
         if (!isCancelled) {
           setError(err);
+        }
+      } finally {
+        if (!isCancelled) {
           setLoading(false);
         }
       }
@@ -38,7 +34,7 @@ export function useRewardsData(selectedCustomerId) {
     return () => {
       isCancelled = true;
     };
-  }, [selectedCustomerId]);
+  }, []);
 
   return { transactions, loading, error };
 }
